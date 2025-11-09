@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Serviço para o seu backend Node.js
+  backend:
+    build: ./trabalho-final-back # Indica onde está o Dockerfile do backend
+    ports:
+      - "3000:3000" # Mapeia a porta 3000 do host para a porta 3000 do container
+    volumes:
+      - ./trabalho-final-back:/app # Monta o volume para desenvolvimento (mudanças no código refletem no container)
+      - /app/node_modules # Impede que o node_modules do host sobrescreva o do container
+    environment:
+      # Variáveis de ambiente para o backend
+      DATABASE_URL: postgres://user:password@db:5432/mydatabase
+      JWT_SECRET: "23T381NMf7OuoB86b4K1cK3SatnMHN2o40Tz"
+      GITHUB_CLIENT_ID: "Ov23liqRt28VNtWmVDcj"
+      GITHUB_CLIENT_SECRET: "6a0f8e68fb3581e155b698feea14b63ac63cc218"
+      CALLBACK_URL: "http://localhost:3000/auth/github/callback" # URL de callback para o GitHub OAuth
+    depends_on:
+      - db # O backend depende do banco de dados
+
+  # Serviço para o banco de dados PostgreSQL
+  db:
+    image: postgres:13-alpine # Usa uma imagem oficial do PostgreSQL
+    environment:
+      # Variáveis de ambiente para o PostgreSQL
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432" # Mapeia a porta 5432 do host para a porta 5432 do container
+    volumes:
+      - db_data:/var/lib/postgresql/data # Volume persistente para os dados do banco
+
+volumes:
+  db_data: # Define o volume para o banco de dados
