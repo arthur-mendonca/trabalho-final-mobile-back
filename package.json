@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev": "nodemon -L server.js",
     "sequelize:migrate": "npx sequelize-cli db:migrate",
     "sequelize:seed": "npx sequelize-cli db:seed:all",
     "sequelize:undo-migrate": "npx sequelize-cli db:migrate:undo",
