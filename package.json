@@ -9,7 +9,8 @@
     "sequelize:migrate": "npx sequelize-cli db:migrate",
     "sequelize:seed": "npx sequelize-cli db:seed:all",
     "sequelize:undo-migrate": "npx sequelize-cli db:migrate:undo",
-    "sequelize:undo-seed": "npx sequelize-cli db:seed:undo:all"
+    "sequelize:undo-seed": "npx sequelize-cli db:seed:undo:all",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -23,11 +24,13 @@
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
     "pg": "^8.12.0",
     "sequelize": "^6.37.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.4",
+    "prettier": "^3.6.2",
     "sequelize-cli": "^6.6.2"
   }
 }
