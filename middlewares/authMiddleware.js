@@ -1,7 +1,7 @@
 const { verifyAccessToken } = require("../utils/tokens");
 const User = require("../db/models/user");
 
-module.exports = async function auth(req, res, next) {
+module.exports = async function authMiddleware(req, res, next) {
   try {
     const authHeader =
       req.headers["authorization"] || req.headers["Authorization"];
