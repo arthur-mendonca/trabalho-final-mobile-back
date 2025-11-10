@@ -10,4 +10,6 @@ routes.get("/me", authMiddleware, UserController.me);
 
 routes.put("/update", authMiddleware, UserController.update);
 
+routes.delete("/delete", authMiddleware, UserController.delete);
+
 module.exports = routes;

@@ -25,14 +25,32 @@ class UsersController {
 
   async update(req, res) {
     try {
-      const { username, email, password } = req.body;
+      const {
+        username,
+        email,
+        password,
+        cashBalance,
+        milesBalance
+      } = req.body;
+
       const response = await UserService.update({
         id: req.user.id,
         username,
         email,
         password,
+        cashBalance,
+        milesBalance,
       });
       return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  async delete(req, res) {
+    try {
+      await UserService.delete({ id: req.user.id });
+      return res.status(204).json();
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
