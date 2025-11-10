@@ -40,6 +40,16 @@ class User extends Model {
           type: DataTypes.TEXT,
           allowNull: true,
         },
+        cashBalance: {
+          type: DataTypes.DECIMAL(10, 2),
+          allowNull: false,
+          defaultValue: 0.0,
+        },
+        milesBalance: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 0,
+        },
       },
       {
         sequelize,
@@ -64,6 +74,11 @@ class User extends Model {
     this.hasMany(models.Booking, {
       foreignKey: "userId",
       as: "bookings",
+    });
+
+    this.hasMany(models.WalletTransaction, {
+      foreignKey: "userId",
+      as: "walletTransactions",
     });
   }
 }

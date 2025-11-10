@@ -36,6 +36,14 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true,
       },
+      cashBalance: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
+      },
+      milesBalance: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

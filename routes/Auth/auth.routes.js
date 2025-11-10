@@ -6,10 +6,7 @@ const routes = Router();
 
 routes.post("/login", AuthController.login);
 routes.post("/refresh", AuthController.refresh);
-
 routes.post("/logout", authMiddleware, AuthController.logout);
-
-
 // Início do fluxo OAuth com GitHub
 routes.get(
   "/github",

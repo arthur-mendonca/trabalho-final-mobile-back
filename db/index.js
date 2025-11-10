@@ -6,8 +6,14 @@ const cfg = config[env];
 const User = require("./models/user");
 const Package = require("./models/package");
 const Booking = require("./models/booking");
+const WalletTransaction = require("./models/wallettransaction");
 
-const models = [User, Package, Booking];
+const models = [
+  User,
+  Package,
+  Booking,
+  WalletTransaction
+];
 
 class Database {
   constructor() {

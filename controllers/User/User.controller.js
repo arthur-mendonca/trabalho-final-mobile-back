@@ -23,7 +23,20 @@ class UsersController {
     return res.status(200).json({ user: req.user });
   }
 
-
+  async update(req, res) {
+    try {
+      const { username, email, password } = req.body;
+      const response = await UserService.update({
+        id: req.user.id,
+        username,
+        email,
+        password,
+      });
+      return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = new UsersController();
