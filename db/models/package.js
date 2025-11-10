@@ -12,12 +12,49 @@ class Package extends Model {
           allowNull: false,
           primaryKey: true,
         },
-        name: DataTypes.STRING,
-        description: DataTypes.TEXT,
-        destination: DataTypes.STRING,
-        startDate: DataTypes.DATE,
-        endDate: DataTypes.DATE,
-        basePrice: DataTypes.DECIMAL,
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false
+        },
+        description: {
+          type: DataTypes.TEXT,
+          allowNull: false
+        },
+        destination: {
+          type: DataTypes.STRING,
+          allowNull: false
+        },
+        startDate: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        endDate: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        basePrice: {
+          type: DataTypes.DECIMAL,
+          allowNull: false
+        },
+        milesToEarn: {
+          type: DataTypes.INTEGER,
+          allowNull: false
+        },
+        transfer: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false
+        },
+        hotel: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false
+        },
+        tickets: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false
+        },
       },
       {
         sequelize,

@@ -31,18 +31,24 @@ module.exports = {
       },
       quotedPrice: {
         type: Sequelize.DECIMAL,
+        allowNull: false,
       },
       paymentMethod: {
         type: Sequelize.ENUM("money", "miles", "mixed"),
+        allowNull: false
       },
       moneyPaid: {
         type: Sequelize.DECIMAL,
+        allowNull: false,
       },
       milesUsed: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       status: {
         type: Sequelize.ENUM("pending", "confirmed", "cancelled"),
+        allowNull: false,
+        defaultValue: "pending",
       },
       createdAt: {
         allowNull: false,

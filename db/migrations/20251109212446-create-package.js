@@ -11,21 +11,43 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       description: {
         type: Sequelize.TEXT,
+        allowNull: false,
       },
       destination: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       startDate: {
         type: Sequelize.DATE,
+        allowNull: false,
       },
       endDate: {
         type: Sequelize.DATE,
+        allowNull: false,
       },
       basePrice: {
         type: Sequelize.DECIMAL,
+        allowNull: false,
+      },
+      milesToEarn: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      transfer: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+      },
+      hotel: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+      },
+      tickets: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

@@ -11,19 +11,24 @@ class WalletTransaction extends Model {
           type: DataTypes.INTEGER
         },
         userId: {
-          type: DataTypes.UUID
+          type: DataTypes.UUID,
+          allowNull: false,
         },
         type: {
-          type: DataTypes.ENUM('deposit', 'purchase', 'earning', 'refund')
+          type: DataTypes.ENUM('deposit', 'purchase', 'earning', 'refund'),
+          allowNull: false,
         },
         currency: {
-          type: DataTypes.ENUM('money', 'miles')
+          type: DataTypes.ENUM('money', 'miles'),
+          allowNull: false,
         },
         amount: {
-          type: DataTypes.DECIMAL
+          type: DataTypes.DECIMAL,
+          allowNull: false,
         },
         description: {
-          type: DataTypes.STRING
+          type: DataTypes.STRING,
+          allowNull: false,
         },
         createdAt: {
           allowNull: false,

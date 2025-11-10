@@ -20,16 +20,20 @@ module.exports = {
         onUpdate: 'CASCADE',
       },
       type: {
-        type: Sequelize.ENUM('deposit', 'purchase', 'earning', 'refund')
+        type: Sequelize.ENUM('deposit', 'purchase', 'earning', 'refund'),
+        allowNull: false,
       },
       currency: {
-        type: Sequelize.ENUM('money', 'miles')
+        type: Sequelize.ENUM('money', 'miles'),
+        allowNull: false,
       },
       amount: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL,
+        allowNull: false,
       },
       description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
