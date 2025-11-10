@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 function signAccessToken(user) {
   const payload = {
@@ -8,14 +8,14 @@ function signAccessToken(user) {
     role: user.role,
   };
   const secret = process.env.JWT_SECRET;
-  const expiresIn = process.env.JWT_ACCESS_EXPIRES_IN || '15m';
+  const expiresIn = process.env.JWT_ACCESS_EXPIRES_IN || "15m";
   return jwt.sign(payload, secret, { expiresIn });
 }
 
 function signRefreshToken(user) {
   const payload = { id: user.id };
   const secret = process.env.JWT_SECRET_REFRESH || process.env.JWT_SECRET;
-  const expiresIn = process.env.JWT_REFRESH_EXPIRES_IN || '30d';
+  const expiresIn = process.env.JWT_REFRESH_EXPIRES_IN || "30d";
   return jwt.sign(payload, secret, { expiresIn });
 }
 

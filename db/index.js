@@ -25,7 +25,7 @@ class Database {
     this.connection = sequelize;
     models.map((model) => model.init(this.connection));
     models.forEach(
-      (model) => model.associate && model.associate(this.connection.models)
+      (model) => model.associate && model.associate(this.connection.models),
     );
   }
 }

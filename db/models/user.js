@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const { Model, DataTypes } = require('sequelize');
-const bcrypt = require('bcryptjs');
+const { Model, DataTypes } = require("sequelize");
+const bcrypt = require("bcryptjs");
 
 class User extends Model {
   static init(sequelize) {
@@ -32,9 +32,9 @@ class User extends Model {
           unique: true,
         },
         role: {
-          type: DataTypes.ENUM('cliente', 'agente'),
+          type: DataTypes.ENUM("cliente", "agente"),
           allowNull: false,
-          defaultValue: 'cliente',
+          defaultValue: "cliente",
         },
         refreshToken: {
           type: DataTypes.TEXT,
@@ -43,27 +43,27 @@ class User extends Model {
       },
       {
         sequelize,
-        modelName: 'User',
-        tableName: 'Users',
+        modelName: "User",
+        tableName: "Users",
         indexes: [
-          { unique: true, fields: ['email'] },
-          { unique: true, fields: ['githubId'] },
+          { unique: true, fields: ["email"] },
+          { unique: true, fields: ["githubId"] },
         ],
         hooks: {
           beforeSave: async (user) => {
-            if (user.changed('password')) {
+            if (user.changed("password")) {
               user.password = await bcrypt.hash(user.password, 10);
             }
           },
         },
-      }
+      },
     );
   }
 
   static associate(models) {
     this.hasMany(models.Booking, {
-      foreignKey: 'userId',
-      as: 'bookings',
+      foreignKey: "userId",
+      as: "bookings",
     });
   }
 }

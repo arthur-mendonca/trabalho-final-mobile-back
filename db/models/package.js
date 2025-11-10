@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const { Model, DataTypes } = require('sequelize');
+const { Model, DataTypes } = require("sequelize");
 
 class Package extends Model {
   static init(sequelize) {
@@ -21,16 +21,16 @@ class Package extends Model {
       },
       {
         sequelize,
-        modelName: 'Package',
-        tableName: 'Packages',
-      }
+        modelName: "Package",
+        tableName: "Packages",
+      },
     );
   }
 
   static associate(models) {
     this.hasMany(models.Booking, {
-      foreignKey: 'packageId',
-      as: 'bookings',
+      foreignKey: "packageId",
+      as: "bookings",
     });
   }
 }

@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const { Model, DataTypes } = require('sequelize');
+const { Model, DataTypes } = require("sequelize");
 
 class Booking extends Model {
   static init(sequelize) {
@@ -25,7 +25,7 @@ class Booking extends Model {
           allowNull: false,
         },
         paymentMethod: {
-          type: DataTypes.ENUM('money', 'miles', 'mixed'),
+          type: DataTypes.ENUM("money", "miles", "mixed"),
           allowNull: false,
         },
         moneyPaid: {
@@ -37,26 +37,26 @@ class Booking extends Model {
           allowNull: false,
         },
         status: {
-          type: DataTypes.ENUM('pending', 'confirmed', 'cancelled'),
+          type: DataTypes.ENUM("pending", "confirmed", "cancelled"),
           allowNull: false,
         },
       },
       {
         sequelize,
-        modelName: 'Booking',
-        tableName: 'Bookings',
-      }
+        modelName: "Booking",
+        tableName: "Bookings",
+      },
     );
   }
 
   static associate(models) {
     this.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'user',
+      foreignKey: "userId",
+      as: "user",
     });
     this.belongsTo(models.Package, {
-      foreignKey: 'packageId',
-      as: 'package',
+      foreignKey: "packageId",
+      as: "package",
     });
   }
 }
