@@ -1,6 +1,4 @@
 const UserService = require("../../services/User.service");
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
 
 class UsersController {
     async register(req, res) {
@@ -27,31 +25,56 @@ class UsersController {
         }
     }
 
-    async login(req, res, next) {
-        return passport.authenticate('local', { session: false }, (err, user, info) => {
-            if (err) {
-                return res.status(500).json({ error: err.message });
+    async login(req, res) {
+        try {
+            const { email, password } = req.body;
+            const response = await UserService.login({ email, password });
+            return res.status(200).json(response);
+        } catch (error) {
+            const msg = String(error.message || '').toLowerCase();
+            if (msg.includes('credenciais inválidas')) {
+                return res.status(401).json({ error: 'Credenciais inválidas' });
             }
-            if (!user) {
-                const message = info?.message || 'Credenciais inválidas';
-                return res.status(401).json({ error: message });
+            return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async refresh(req, res) {
+        try {
+            const { refreshToken } = req.body;
+            if (!refreshToken) {
+                return res.status(400).json({ error: 'refreshToken é obrigatório' });
             }
-
-            try {
-                const payload = {
-                    id: user.id,
-                    email: user.email,
-                    username: user.username,
-                    role: user.role,
-                };
-
-                const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
-
-                return res.status(200).json({ user: payload, token });
-            } catch (error) {
-                return res.status(500).json({ error: error.message });
+            const response = await UserService.refresh({ refreshToken });
+            return res.status(200).json(response);
+        } catch (error) {
+            const msg = String(error.message || '').toLowerCase();
+            if (msg.includes('refresh token inválido')) {
+                return res.status(401).json({ error: 'Refresh token inválido' });
             }
-        })(req, res, next);
+            return res.status(401).json({ error: 'Refresh token inválido ou expirado' });
+        }
+    }
+
+    async logout(req, res) {
+        try {
+            const userId = req.user?.id;
+            if (!userId) {
+                return res.status(401).json({ error: 'Não autenticado' });
+            }
+            await UserService.logout({ userId });
+            return res.status(200).json({ message: 'Logout realizado' });
+        } catch (error) {
+            const msg = String(error.message || '').toLowerCase();
+            if (msg.includes('usuário não encontrado')) {
+                return res.status(404).json({ error: 'Usuário não encontrado' });
+            }
+            return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async me(req, res) {
+        return res.status(200).json({ user: req.user });
     }
 }
 

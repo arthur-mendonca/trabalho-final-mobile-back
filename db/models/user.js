@@ -36,6 +36,10 @@ class User extends Model {
           allowNull: false,
           defaultValue: 'cliente',
         },
+        refreshToken: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
       },
       {
         sequelize,
