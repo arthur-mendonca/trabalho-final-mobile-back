@@ -57,6 +57,15 @@ class PackageController {
       return res.status(404).json({ error: error.message });
     }
   }
+
+  async getMilesValue(_req, res) {
+    try {
+      const milesValue = await PackageService.getMilesValue();
+      return res.status(200).json(milesValue);
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = new PackageController();

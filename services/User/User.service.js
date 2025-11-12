@@ -16,7 +16,29 @@ class UserService {
         githubId,
         role,
       });
-      return user;
+
+      const parsedUser = user.toJSON();
+      delete parsedUser.password;
+      delete parsedUser.refreshToken;
+
+      return parsedUser;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getUserByEmail({ email }) {
+    try {
+      const user = await User.findOne({
+        where: {
+          email,
+        },
+      });
+
+      if (!user) {
+        return false;
+      }
+      return true;
     } catch (error) {
       throw new Error(error.message);
     }

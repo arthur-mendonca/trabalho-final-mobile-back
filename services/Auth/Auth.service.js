@@ -44,20 +44,12 @@ class AuthService {
             if (!ok) {
                 throw new Error("Credenciais inválidas");
             }
-
             const accessToken = signAccessToken(user);
             const refreshToken = signRefreshToken(user);
             const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
             await user.update({ refreshToken: refreshTokenHash });
 
-            const payload = {
-                id: user.id,
-                email: user.email,
-                username: user.username,
-                role: user.role,
-            };
-
-            return { user: payload, accessToken, refreshToken };
+            return { accessToken, refreshToken };
         } catch (error) {
             throw new Error(error.message);
         }

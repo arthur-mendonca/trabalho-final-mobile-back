@@ -13,4 +13,7 @@ routes.post("/", authMiddleware, PackageController.create);
 routes.put("/:id", authMiddleware, PackageController.update);
 routes.delete("/:id", authMiddleware, PackageController.delete);
 
+// VALOR DIÁRIO DA MILHA
+routes.get("/miles/value", PackageController.getMilesValue);
+
 module.exports = routes;

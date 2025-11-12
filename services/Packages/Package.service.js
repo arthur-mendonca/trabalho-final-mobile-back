@@ -81,6 +81,34 @@ class PackageService {
       throw new Error(error.message);
     }
   }
+
+  async getMilesValue() {
+    try {
+      const milesValue = process.env.MILES_VALUE;
+      const maxVariation = process.env.MAX_VARIATION;
+      const minVariation = process.env.MIN_VARIATION;
+      if (!milesValue) {
+        throw new Error("MILES_VALUE não está configurado");
+      }
+      if (!maxVariation) {
+        throw new Error("MAX_VARIATION não está configurado");
+      }
+      if (!minVariation) {
+        throw new Error("MIN_VARIATION não está configurado");
+      }
+
+      function getRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+      const randomized = Number(getRandomArbitrary(minVariation, maxVariation)).toFixed(2);
+
+      const output = (milesValue * (1 + Number(randomized))).toFixed(2)
+      return Number(output);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
 }
 
 module.exports = new PackageService();

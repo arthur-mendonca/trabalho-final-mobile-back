@@ -3,13 +3,12 @@ const UserService = require("../../services/User/User.service");
 class UsersController {
   async register(req, res) {
     try {
-      const { username, email, password, githubId, role } = req.body;
+      const { username, email, password, role } = req.body;
 
       const response = await UserService.register({
         username,
         email,
         password,
-        githubId,
         role,
       });
 
@@ -20,7 +19,19 @@ class UsersController {
   }
 
   async me(req, res) {
-    return res.status(200).json({ user: req.user });
+    return res.status(200).json(req.user);
+  }
+
+  async getUserByEmail(req, res) {
+    try {
+      const { email } = req.params;
+
+      const response = await UserService.getUserByEmail({ email });
+
+      return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
   }
 
   async update(req, res) {
