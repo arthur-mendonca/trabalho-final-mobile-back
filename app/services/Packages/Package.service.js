@@ -1,6 +1,6 @@
 const Package = require("../../db/models/package")
 const { Op } = require("sequelize");
-
+const AppError = require("../../errors/AppError")
 
 class PackageService {
   async create(packageData, user) {
@@ -11,12 +11,10 @@ class PackageService {
       }
       const newPackage = await Package.create({
         ...packageData,
-
       });
       return newPackage;
     } catch (error) {
       console.log(error);
-
       throw new AppError(error.statusCode || 500, error.message);
     }
   }
@@ -46,7 +44,20 @@ class PackageService {
         order: [["startDate", "ASC"]],
       });
 
-      return packages;
+      const formattedPackages = packages.map(async (pack) => {
+        const parsedPack = pack.toJSON()
+        let milVal = await this.getMilesValue()
+        let parsedPrice = parseFloat(parsedPack.basePrice)
+        const milesPrice = milVal * parsedPrice
+
+        return {
+          ...parsedPack,
+          basePrice: parseFloat(parsedPack.basePrice),
+          milesPrice: parseFloat(milesPrice.toFixed(2))
+        }
+      })
+
+      return Promise.all(formattedPackages);
     } catch (error) {
       throw new AppError(error.statusCode || 500, error.message);
     }
@@ -58,7 +69,18 @@ class PackageService {
       if (!packageFound) {
         throw new AppError(404, "Pacote não encontrado");
       }
-      return packageFound;
+      let parsedPack = packageFound.toJSON()
+
+      let milVal = await this.getMilesValue()
+      let parsedPrice = parseFloat(parsedPack.basePrice)
+      let milesPrice = milVal * parsedPrice
+
+      const formattedPack = {
+        ...parsedPack,
+        basePrice: parseFloat(parsedPack.basePrice),
+        milesPrice: parseFloat(milesPrice.toFixed(2))
+      }
+      return formattedPack;
     } catch (error) {
       throw new AppError(error.statusCode || 500, error.message);
     }
