@@ -1,5 +1,6 @@
 const AuthService = require("../../services/Auth/Auth.service");
 
+
 class AuthController {
     async githubCallback(req, res) {
         try {

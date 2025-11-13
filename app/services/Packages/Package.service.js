@@ -1,6 +1,6 @@
-const Package = require("../../db/models/package");
+const Package = require("../../db/models/package")
 const { Op } = require("sequelize");
-const AppError = require("../../errors/AppError");
+
 
 class PackageService {
   async create(packageData, user) {

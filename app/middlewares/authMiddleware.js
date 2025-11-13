@@ -1,4 +1,4 @@
-const { verifyAccessToken, verifyRefreshToken } = require("../utils/tokens");
+const { verifyAccessToken, verifyRefreshToken } = require("../../app/utils/tokens");
 const User = require("../db/models/user");
 const AuthService = require("../services/Auth/Auth.service");
 

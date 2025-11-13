@@ -5,7 +5,8 @@ const {
     signAccessToken,
     signRefreshToken,
     verifyRefreshToken,
-} = require("../../utils/tokens");
+} = require("../../../app/utils/tokens");
+
 
 class AuthService {
     async upsertGithubUser({ githubId, username, email }) {
