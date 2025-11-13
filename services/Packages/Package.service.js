@@ -84,26 +84,37 @@ class PackageService {
 
   async getMilesValue() {
     try {
-      const milesValue = process.env.MILES_VALUE;
-      const maxVariation = process.env.MAX_VARIATION;
-      const minVariation = process.env.MIN_VARIATION;
-      if (!milesValue) {
+      const milesValueStr = process.env.MILES_VALUE;
+      const maxVariationStr = process.env.MAX_VARIATION;
+      const minVariationStr = process.env.MIN_VARIATION;
+
+      if (!milesValueStr) {
         throw new Error("MILES_VALUE não está configurado");
       }
-      if (!maxVariation) {
+      if (!maxVariationStr) {
         throw new Error("MAX_VARIATION não está configurado");
       }
-      if (!minVariation) {
+      if (!minVariationStr) {
         throw new Error("MIN_VARIATION não está configurado");
       }
+      const milesValue = parseFloat(milesValueStr);
+      const maxVariation = parseFloat(maxVariationStr);
+      const minVariation = parseFloat(minVariationStr);
 
-      function getRandomArbitrary(min, max) {
-        return Math.random() * (max - min) + min;
+      if (Number.isNaN(milesValue)) {
+        throw new Error("MILES_VALUE inválido");
       }
-      const randomized = Number(getRandomArbitrary(minVariation, maxVariation)).toFixed(2);
+      if (Number.isNaN(maxVariation)) {
+        throw new Error("MAX_VARIATION inválido");
+      }
+      if (Number.isNaN(minVariation)) {
+        throw new Error("MIN_VARIATION inválido");
+      }
 
-      const output = (milesValue * (1 + Number(randomized))).toFixed(2)
-      return Number(output);
+      const randomized = Math.random() * (maxVariation - minVariation) + minVariation;
+      const output = milesValue * (1 + randomized);
+      const parsedOutput = Number(output.toFixed(0));
+      return parsedOutput;
     } catch (error) {
       console.log(error);
       throw new Error(error.message);
