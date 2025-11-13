@@ -4,10 +4,11 @@ class PackageController {
   async create(req, res) {
     try {
       const packageData = req.body;
-      const newPackage = await PackageService.create(packageData);
+      const user = req.user;
+      const newPackage = await PackageService.create(packageData, user);
       return res.status(201).json(newPackage);
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(error.statusCode || 400).json({ error: error.message });
     }
   }
 
@@ -23,7 +24,7 @@ class PackageController {
       });
       return res.status(200).json(packages);
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(error.statusCode || 400).json({ error: error.message });
     }
   }
 
@@ -33,7 +34,7 @@ class PackageController {
       const packageFound = await PackageService.getById(id);
       return res.status(200).json(packageFound);
     } catch (error) {
-      return res.status(404).json({ error: error.message });
+      return res.status(error.statusCode || 404).json({ error: error.message });
     }
   }
 
@@ -44,7 +45,7 @@ class PackageController {
       const updatedPackage = await PackageService.update(id, packageData);
       return res.status(200).json(updatedPackage);
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(error.statusCode || 400).json({ error: error.message });
     }
   }
 
@@ -54,7 +55,7 @@ class PackageController {
       const result = await PackageService.delete(id);
       return res.status(200).json(result);
     } catch (error) {
-      return res.status(404).json({ error: error.message });
+      return res.status(error.statusCode || 404).json({ error: error.message });
     }
   }
 
@@ -63,7 +64,7 @@ class PackageController {
       const milesValue = await PackageService.getMilesValue();
       return res.status(200).json(milesValue);
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(error.statusCode || 400).json({ error: error.message });
     }
   }
 }

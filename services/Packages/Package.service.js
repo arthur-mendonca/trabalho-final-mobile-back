@@ -1,13 +1,23 @@
 const Package = require("../../db/models/package");
 const { Op } = require("sequelize");
+const AppError = require("../../errors/AppError");
 
 class PackageService {
-  async create(packageData) {
+  async create(packageData, user) {
     try {
-      const newPackage = await Package.create(packageData);
+      const { role } = user;
+      if (role !== "agente") {
+        throw new AppError(403, "Apenas agentes podem criar pacotes");
+      }
+      const newPackage = await Package.create({
+        ...packageData,
+
+      });
       return newPackage;
     } catch (error) {
-      throw new Error(error.message);
+      console.log(error);
+
+      throw new AppError(error.statusCode || 500, error.message);
     }
   }
 
@@ -38,7 +48,7 @@ class PackageService {
 
       return packages;
     } catch (error) {
-      throw new Error(error.message);
+      throw new AppError(error.statusCode || 500, error.message);
     }
   }
 
@@ -46,11 +56,11 @@ class PackageService {
     try {
       const packageFound = await Package.findByPk(id);
       if (!packageFound) {
-        throw new Error("Pacote não encontrado");
+        throw new AppError(404, "Pacote não encontrado");
       }
       return packageFound;
     } catch (error) {
-      throw new Error(error.message);
+      throw new AppError(error.statusCode || 500, error.message);
     }
   }
 
@@ -58,13 +68,13 @@ class PackageService {
     try {
       const packageFound = await Package.findByPk(id);
       if (!packageFound) {
-        throw new Error("Pacote não encontrado");
+        throw new AppError(404, "Pacote não encontrado");
       }
 
       await packageFound.update(packageData);
       return packageFound;
     } catch (error) {
-      throw new Error(error.message);
+      throw new AppError(error.statusCode || 500, error.message);
     }
   }
 
@@ -72,13 +82,13 @@ class PackageService {
     try {
       const packageFound = await Package.findByPk(id);
       if (!packageFound) {
-        throw new Error("Pacote não encontrado");
+        throw new AppError(404, "Pacote não encontrado");
       }
 
       await packageFound.destroy();
       return { message: "Pacote excluído com sucesso" };
     } catch (error) {
-      throw new Error(error.message);
+      throw new AppError(error.statusCode || 500, error.message);
     }
   }
 
@@ -89,26 +99,26 @@ class PackageService {
       const minVariationStr = process.env.MIN_VARIATION;
 
       if (!milesValueStr) {
-        throw new Error("MILES_VALUE não está configurado");
+        throw new AppError(500, "MILES_VALUE não está configurado");
       }
       if (!maxVariationStr) {
-        throw new Error("MAX_VARIATION não está configurado");
+        throw new AppError(500, "MAX_VARIATION não está configurado");
       }
       if (!minVariationStr) {
-        throw new Error("MIN_VARIATION não está configurado");
+        throw new AppError(500, "MIN_VARIATION não está configurado");
       }
       const milesValue = parseFloat(milesValueStr);
       const maxVariation = parseFloat(maxVariationStr);
       const minVariation = parseFloat(minVariationStr);
 
       if (Number.isNaN(milesValue)) {
-        throw new Error("MILES_VALUE inválido");
+        throw new AppError(500, "MILES_VALUE inválido");
       }
       if (Number.isNaN(maxVariation)) {
-        throw new Error("MAX_VARIATION inválido");
+        throw new AppError(500, "MAX_VARIATION inválido");
       }
       if (Number.isNaN(minVariation)) {
-        throw new Error("MIN_VARIATION inválido");
+        throw new AppError(500, "MIN_VARIATION inválido");
       }
 
       const randomized = Math.random() * (maxVariation - minVariation) + minVariation;
@@ -116,8 +126,7 @@ class PackageService {
       const parsedOutput = Number(output.toFixed(0));
       return parsedOutput;
     } catch (error) {
-      console.log(error);
-      throw new Error(error.message);
+      throw new AppError(error.statusCode || 500, error.message);
     }
   }
 }

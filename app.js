@@ -16,9 +16,12 @@ class App {
   middlewares() {
     this.server.use(
       cors({
-        origin: "*",
+        // Reflete a origem do request; necessário para credenciais/cookies
+        origin: true,
+        credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization"],
+        allowedHeaders: ["Content-Type", "Authorization", "X-Refresh-Token", "x-refresh-token"],
+        exposedHeaders: ["X-Access-Token", "X-Refresh-Token"],
       }),
     );
     this.server.use(express.json());

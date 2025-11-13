@@ -8,6 +8,12 @@ class AuthController {
                 return res.status(401).json({ error: "GitHub OAuth falhou" });
             }
             const response = await AuthService.issueTokensForUser(user);
+            res.cookie("refresh_token", response.refreshToken, {
+                httpOnly: true,
+                // secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
             return res.status(200).json(response);
         } catch (error) {
             return res.status(500).json({ error: error.message });
@@ -18,6 +24,12 @@ class AuthController {
         try {
             const { email, password } = req.body;
             const response = await AuthService.login({ email, password });
+            res.cookie("refresh_token", response.refreshToken, {
+                httpOnly: true,
+                // secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
             return res.status(200).json(response);
         } catch (error) {
             const msg = String(error.message || "").toLowerCase();
@@ -35,6 +47,12 @@ class AuthController {
                 return res.status(400).json({ error: "refreshToken é obrigatório" });
             }
             const response = await AuthService.refresh({ refreshToken });
+            res.cookie("refresh_token", response.refreshToken, {
+                httpOnly: true,
+                // secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
             return res.status(200).json(response);
         } catch (error) {
             const msg = String(error.message || "").toLowerCase();
@@ -54,6 +72,11 @@ class AuthController {
                 return res.status(401).json({ error: "Não autenticado" });
             }
             await AuthService.logout({ userId });
+            res.clearCookie("refresh_token", {
+                httpOnly: true,
+                // secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+            });
             return res.status(200).json({ message: "Logout realizado" });
         } catch (error) {
             const msg = String(error.message || "").toLowerCase();
