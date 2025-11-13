@@ -8,7 +8,7 @@ function signAccessToken(user) {
     role: user.role,
   };
   const secret = process.env.JWT_SECRET;
-  const expiresIn = process.env.JWT_ACCESS_EXPIRES_IN || "2";
+  const expiresIn = process.env.JWT_ACCESS_EXPIRES_IN || "15m";
   return jwt.sign(payload, secret, { expiresIn });
 }
 
