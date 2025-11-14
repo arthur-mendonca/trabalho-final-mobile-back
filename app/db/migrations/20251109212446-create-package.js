@@ -50,6 +50,10 @@ module.exports = {
         allowNull: false,
       },
       tickets: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+      },
+      img: {
         type: Sequelize.TEXT,
         allowNull: true,
       },

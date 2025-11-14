@@ -61,6 +61,8 @@ class PackageService {
 
       return Promise.all(formattedPackages);
     } catch (error) {
+      console.log(error);
+
       throw new AppError(error.statusCode || 500, error.message);
     }
   }
