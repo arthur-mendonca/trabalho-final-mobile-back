@@ -1,7 +1,6 @@
 const Package = require("../../db/models/package")
 const { Op } = require("sequelize");
 const AppError = require("../../errors/AppError");
-const { getExchangeRate } = require("../api/exchange-rate");
 const ExchangeRateService = require("../api/exchange-rate");
 
 class PackageService {
