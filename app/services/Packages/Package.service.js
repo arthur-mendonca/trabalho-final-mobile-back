@@ -5,13 +5,27 @@ const ExchangeRateService = require("../api/exchange-rate");
 
 class PackageService {
   async create(packageData, user) {
+    const { name, description, destination, startDate, endDate, basePrice, transfer, hotel, tickets } = packageData
     try {
       const { role } = user;
       if (role !== "agente") {
         throw new AppError(403, "Apenas agentes podem criar pacotes");
       }
+      const milesValue = basePrice / 2;
+      const payload = {
+        name,
+        description,
+        destination,
+        startDate,
+        endDate,
+        basePrice,
+        milesToEarn: milesValue,
+        transfer,
+        hotel,
+        tickets,
+      }
       const newPackage = await Package.create({
-        ...packageData,
+        ...payload,
       });
       return newPackage;
     } catch (error) {
