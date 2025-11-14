@@ -123,6 +123,10 @@ class PackageService {
         throw new AppError(404, "Pacote não encontrado");
       }
 
+      if (packageData.basePrice <= 0) {
+        throw new AppError(400, "O preço base deve ser maior que zero");
+      }
+
       await packageFound.update(packageData);
       return packageFound;
     } catch (error) {
