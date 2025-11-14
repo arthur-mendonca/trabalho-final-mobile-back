@@ -1,6 +1,8 @@
 const Package = require("../../db/models/package")
 const { Op } = require("sequelize");
-const AppError = require("../../errors/AppError")
+const AppError = require("../../errors/AppError");
+const { getExchangeRate } = require("../api/exchange-rate");
+const ExchangeRateService = require("../api/exchange-rate");
 
 class PackageService {
   async create(packageData, user) {
@@ -143,7 +145,8 @@ class PackageService {
         throw new AppError(500, "MIN_VARIATION inválido");
       }
 
-      const randomized = Math.random() * (maxVariation - minVariation) + minVariation;
+      const exchangeRate = await ExchangeRateService.getExchangeRate();
+      const randomized = exchangeRate * (maxVariation - minVariation) + minVariation;
       const output = milesValue * (1 + randomized);
       const parsedOutput = Number(output.toFixed(0));
       return parsedOutput;
