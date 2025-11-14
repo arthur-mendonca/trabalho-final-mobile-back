@@ -21,6 +21,9 @@ class PackageService {
       if (role !== "agente") {
         throw new AppError(403, "Apenas agentes podem criar pacotes");
       }
+      if (basePrice <= 0) {
+        throw new AppError(400, "O preço base deve ser maior que zero");
+      }
       const milesValue = basePrice / 2;
       const payload = {
         name,
