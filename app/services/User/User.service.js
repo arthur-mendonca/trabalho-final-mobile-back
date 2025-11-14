@@ -1,5 +1,5 @@
 const User = require("../../db/models/user");
-
+const validations = require("../../utils/validations");
 
 class UserService {
   async register({
@@ -10,6 +10,16 @@ class UserService {
     role = "cliente",
   }) {
     try {
+      const isEmailValid = await validations.isEmailValid(email);
+      if (!isEmailValid) {
+        throw new Error("Email inválido");
+      }
+
+      const sameEmail = await this.getUserByEmail({ email });
+      if (sameEmail) {
+        throw new Error("Email já cadastrado");
+      }
+
       const user = await User.create({
         username,
         email,

@@ -55,6 +55,10 @@ class Package extends Model {
           allowNull: false,
           defaultValue: false
         },
+        img: {
+          type: DataTypes.TEXT,
+          allowNull: true
+        }
       },
       {
         sequelize,
