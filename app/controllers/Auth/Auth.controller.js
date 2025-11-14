@@ -9,9 +9,14 @@ class AuthController {
                 return res.status(401).json({ error: "GitHub OAuth falhou" });
             }
             const response = await AuthService.issueTokensForUser(user);
+            const redirectUri = req.query.state || req.query.redirect_uri;
+            if (redirectUri) {
+                const url = `${redirectUri}?accessToken=${encodeURIComponent(response.accessToken)}&refreshToken=${encodeURIComponent(response.refreshToken)}`;
+                return res.redirect(url);
+            }
+            // Fallback: cookie + JSON
             res.cookie("refresh_token", response.refreshToken, {
                 httpOnly: true,
-                // secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
                 maxAge: 30 * 24 * 60 * 60 * 1000,
             });
@@ -27,7 +32,6 @@ class AuthController {
             const response = await AuthService.login({ email, password });
             res.cookie("refresh_token", response.refreshToken, {
                 httpOnly: true,
-                // secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
                 maxAge: 30 * 24 * 60 * 60 * 1000,
             });
@@ -50,7 +54,6 @@ class AuthController {
             const response = await AuthService.refresh({ refreshToken });
             res.cookie("refresh_token", response.refreshToken, {
                 httpOnly: true,
-                // secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
                 maxAge: 30 * 24 * 60 * 60 * 1000,
             });
@@ -75,7 +78,6 @@ class AuthController {
             await AuthService.logout({ userId });
             res.clearCookie("refresh_token", {
                 httpOnly: true,
-                // secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
             });
             return res.status(200).json({ message: "Logout realizado" });

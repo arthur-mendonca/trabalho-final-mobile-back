@@ -1,5 +1,4 @@
 const User = require("../../db/models/user");
-const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const {
     signAccessToken,
@@ -20,11 +19,12 @@ class AuthService {
                 return existingByEmail;
             }
 
-            const randomPassword = crypto.randomBytes(32).toString("hex");
+            // const randomPassword = crypto.randomBytes(32).toString("hex");
+            const password = bcrypt.hashSync("123456", 10);
             user = await User.create({
                 username,
                 email,
-                password: randomPassword,
+                password,
                 githubId,
                 role: "cliente",
             });
