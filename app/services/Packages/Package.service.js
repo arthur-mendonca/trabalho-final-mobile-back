@@ -5,7 +5,17 @@ const ExchangeRateService = require("../api/exchange-rate");
 
 class PackageService {
   async create(packageData, user) {
-    const { name, description, destination, startDate, endDate, basePrice, transfer, hotel, tickets } = packageData
+    const {
+      name,
+      description,
+      destination,
+      startDate,
+      endDate,
+      basePrice,
+      transfer,
+      hotel,
+      tickets
+    } = packageData
     try {
       const { role } = user;
       if (role !== "agente") {
