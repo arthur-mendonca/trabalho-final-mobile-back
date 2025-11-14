@@ -81,14 +81,13 @@ class PackageService {
         return {
           ...parsedPack,
           basePrice: parseFloat(parsedPack.basePrice),
-          milesPrice: parseFloat(milesPrice.toFixed(2))
+          milesPrice: parseFloat(milesPrice.toFixed(0))
         }
       })
 
       return Promise.all(formattedPackages);
     } catch (error) {
       console.log(error);
-
       throw new AppError(error.statusCode || 500, error.message);
     }
   }
@@ -108,7 +107,7 @@ class PackageService {
       const formattedPack = {
         ...parsedPack,
         basePrice: parseFloat(parsedPack.basePrice),
-        milesPrice: parseFloat(milesPrice.toFixed(2))
+        milesPrice: parseFloat(milesPrice.toFixed(0))
       }
       return formattedPack;
     } catch (error) {
