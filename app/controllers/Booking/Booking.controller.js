@@ -1,7 +1,7 @@
 const BookingService = require("../../services/Booking/Booking.service");
 
 class BookingController {
-  static async purchasePackage(req, res, next) {
+  async purchasePackage(req, res, next) {
     try {
       const { userId } = req.user;
       const { packageId } = req.params;

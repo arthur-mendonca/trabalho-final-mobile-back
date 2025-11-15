@@ -1,10 +1,8 @@
-const {
-  User,
-  Package,
-  Booking,
-  WalletTransaction,
-} = require("../../db/models");
+const Booking = require("../../db/models/booking");
+const Package = require("../../db/models/package");
+const User = require("../../db/models/user");
 const { sequelize } = require("../../db/models/user");
+const WalletTransaction = require("../../db/models/wallettransaction");
 const AppError = require("../../errors/AppError");
 
 class BookingService {
