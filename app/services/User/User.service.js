@@ -1,5 +1,6 @@
 const User = require("../../db/models/user");
 const validations = require("../../utils/validations");
+const AppError = require("../../errors/AppError");
 
 class UserService {
   async register({
@@ -55,14 +56,7 @@ class UserService {
     }
   }
 
-  async update({
-    id,
-    username,
-    email,
-    password,
-    cashBalance,
-    milesBalance
-  }) {
+  async update({ id, username, email, password, cashBalance, milesBalance }) {
     try {
       const user = await User.findByPk(id);
       if (!user) {
@@ -76,11 +70,30 @@ class UserService {
         milesBalance,
       });
 
+      if (email) {
+        const isEmailValid = await validations.isEmailValid(email);
+        if (!isEmailValid) {
+          throw new AppError(400, "Ema  il inválido");
+        }
+      }
+
+      const sameEmail = await this.getUserByEmail({ email });
+      if (sameEmail && user.email !== email) {
+        throw new AppError(409, "Email já cadastrado");
+      }
+
+      if (cashBalance && cashBalance < 0) {
+        throw new AppError(400, "Saldo em dinheiro não pode ser negativo");
+      }
+
+      if (milesBalance && milesBalance < 0) {
+        throw new AppError(400, "Saldo em milhas não pode ser negativo");
+      }
+
       const userObj = user.get({ plain: true });
       delete userObj.password;
       delete userObj.refreshToken;
       return userObj;
-
     } catch (error) {
       throw new Error(error.message);
     }
