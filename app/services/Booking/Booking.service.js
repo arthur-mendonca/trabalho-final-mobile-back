@@ -4,9 +4,10 @@ const User = require("../../db/models/user");
 const { sequelize } = require("../../db/models/user");
 const WalletTransaction = require("../../db/models/wallettransaction");
 const AppError = require("../../errors/AppError");
+const PackageService = require("../Packages/Package.service");
 
 class BookingService {
-  static async purchasePackage({
+  async purchasePackage({
     userId,
     packageId,
     paymentMethod,
@@ -20,48 +21,51 @@ class BookingService {
       });
 
       if (!user || !travelPackage) {
-        throw new AppError(404, "User or Package not found");
+        throw new AppError(404, "Usuário ou pacote não encontrados.");
+      }
+
+      if (user && user.role !== "cliente") {
+        throw new AppError(403, "Apenas clientes podem compras pacotes.");
       }
 
       let moneyPaid = 0;
       let milesUsed = 0;
       const packagePrice = parseFloat(travelPackage.basePrice);
+      const milesValueToday = await PackageService.getMilesValue()
 
       if (paymentMethod === "money") {
         moneyPaid = packagePrice;
         if (user.cashBalance < moneyPaid) {
-          throw new AppError(400, "Insufficient cash balance");
+          throw new AppError(400, "Crédito insuficiente em dinheiro.");
         }
       } else if (paymentMethod === "miles") {
-        milesUsed = packagePrice * 100; // Assuming 1 BRL = 100 miles
+        milesUsed = packagePrice * milesValueToday;
         if (user.milesBalance < milesUsed) {
-          throw new AppError(400, "Insufficient miles balance");
+          throw new AppError(400, "Crédito insuficiente em milhas.");
         }
       } else if (paymentMethod === "mixed") {
         milesUsed = parseInt(milesToUse, 10);
         const remainingMilesCost = packagePrice * 100 - milesUsed;
         moneyPaid = remainingMilesCost / 100;
-
         if (user.milesBalance < milesUsed || user.cashBalance < moneyPaid) {
-          throw new AppError(400, "Insufficient balance for mixed payment");
+          throw new AppError(400, "Crédito insuficiente para pagamento misto.");
         }
       } else {
-        throw new AppError(400, "Invalid payment method");
+        throw new AppError(400, "Método de pagamento inválido.");
       }
 
-      // Debit balances
+      // Debitar créditos do usuário
       user.cashBalance = parseFloat(user.cashBalance) - moneyPaid;
       user.milesBalance = parseInt(user.milesBalance, 10) - milesUsed;
 
-      // Earn miles on money paid
+      // Anotar milhas ganhas
       const milesEarned = Math.floor(
-        moneyPaid * (travelPackage.milesToEarn / 10),
-      ); // Example: earn 10% of money paid as miles
+        (travelPackage.milesToEarn),
+      );
       user.milesBalance += milesEarned;
 
       await user.save({ transaction: t });
 
-      // Create booking record
       const booking = await Booking.create(
         {
           userId,
@@ -71,11 +75,12 @@ class BookingService {
           moneyPaid,
           milesUsed,
           status: "confirmed",
+          milesEarned,
         },
         { transaction: t },
       );
 
-      // Log transactions
+      // Registrar transação na carteira
       if (moneyPaid > 0) {
         await WalletTransaction.create(
           {
@@ -83,7 +88,7 @@ class BookingService {
             type: "purchase",
             currency: "money",
             amount: -moneyPaid,
-            description: `Payment for package ${travelPackage.name}`,
+            description: `Pagamento por ${travelPackage.name}`,
           },
           { transaction: t },
         );
@@ -95,7 +100,7 @@ class BookingService {
             type: "purchase",
             currency: "miles",
             amount: -milesUsed,
-            description: `Miles used for package ${travelPackage.name}`,
+            description: `Milhas usadas no pacote ${travelPackage.name}`,
           },
           { transaction: t },
         );
@@ -107,7 +112,7 @@ class BookingService {
             type: "earning",
             currency: "miles",
             amount: milesEarned,
-            description: `Miles earned from package ${travelPackage.name}`,
+            description: `Milhas ganhas por ${travelPackage.name}`,
           },
           { transaction: t },
         );
@@ -117,7 +122,7 @@ class BookingService {
       return booking;
     } catch (error) {
       await t.rollback();
-      throw error;
+      throw new AppError(500, error.message);
     }
   }
 }

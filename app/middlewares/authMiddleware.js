@@ -41,6 +41,8 @@ module.exports = async function authMiddleware(req, res, next) {
       email: user.email,
       username: user.username,
       role: user.role,
+      cashBalance: parseFloat(user.cashBalance),
+      milesBalance: user.milesBalance,
     };
     next();
   } catch (error) {

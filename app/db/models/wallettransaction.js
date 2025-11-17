@@ -5,10 +5,10 @@ class WalletTransaction extends Model {
     return super.init(
       {
         id: {
+          type: DataTypes.UUID,
+          defaultValue: DataTypes.UUIDV4,
           allowNull: false,
-          autoIncrement: true,
           primaryKey: true,
-          type: DataTypes.INTEGER
         },
         userId: {
           type: DataTypes.UUID,
