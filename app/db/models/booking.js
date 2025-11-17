@@ -58,6 +58,10 @@ class Booking extends Model {
       foreignKey: "packageId",
       as: "package",
     });
+    this.hasMany(models.WalletTransaction, {
+      foreignKey: "bookingId",
+      as: "walletTransactions",
+    });
   }
 }
 

@@ -2,6 +2,7 @@ const Package = require("../../db/models/package")
 const { Op } = require("sequelize");
 const AppError = require("../../errors/AppError");
 const ExchangeRateService = require("../api/exchange-rate");
+const Booking = require("../../db/models/booking");
 
 class PackageService {
   async create(packageData, user) {
@@ -24,7 +25,7 @@ class PackageService {
       if (basePrice <= 0) {
         throw new AppError(400, "O preço base deve ser maior que zero");
       }
-      const milesValue = basePrice / 2;
+      const milesValue = basePrice * await this.getMilesValue();
       const payload = {
         name,
         description,
@@ -138,6 +139,15 @@ class PackageService {
       const packageFound = await Package.findByPk(id);
       if (!packageFound) {
         throw new AppError(404, "Pacote não encontrado");
+      }
+      const relatedBookings = await Booking.findAll({
+        where: {
+          packageId: id,
+        }
+      })
+      if (relatedBookings.length > 0) {
+        throw new AppError(400,
+          "Este pacote está associado a uma ou mais reservas. Não é possível excluí-lo.");
       }
 
       await packageFound.destroy();

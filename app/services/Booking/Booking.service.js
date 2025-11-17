@@ -57,9 +57,13 @@ class BookingService {
         }
       } else if (paymentMethod === "mixed") {
         milesUsed = parseInt(milesToUse, 10);
+        console.log("--------------------------------");
+        console.log("milesUsed", milesUsed);
+        console.log("typeof milesUsed", typeof milesUsed);
         const remainingMilesCost = packagePrice * milesValueToday - milesUsed;
-        moneyPaid = parseFloat(remainingMilesCost).toFixed(2) / milesValueToday;
-        const parsedMoneyPaid = parseFloat(moneyPaid).toFixed(2);
+        moneyPaid = Number(remainingMilesCost) / milesValueToday;
+        const parsedMoneyPaid = Number(moneyPaid);
+
         if (user.milesBalance < milesUsed || user.cashBalance < parsedMoneyPaid) {
           throw new AppError(400, "Crédito insuficiente para pagamento misto.");
         }
@@ -68,14 +72,14 @@ class BookingService {
       }
 
       // Debitar créditos do usuário
-      user.cashBalance = parseFloat(user.cashBalance).toFixed(2) - parseFloat(moneyPaid).toFixed(2);
+      user.cashBalance = Number(user.cashBalance) - moneyPaid;
       user.milesBalance = parseInt(user.milesBalance, 10) - milesUsed;
 
       // Anotar milhas ganhas
       const milesEarned = Math.floor(
         (travelPackage.milesToEarn),
       );
-      user.milesBalance += milesEarned;
+      user.milesBalance = Number(user.milesBalance) + milesEarned;
 
       await user.save({ transaction: t });
 
@@ -98,6 +102,7 @@ class BookingService {
         await WalletTransaction.create(
           {
             userId,
+            bookingId: booking.id,
             type: "purchase",
             currency: "money",
             amount: -parseFloat(moneyPaid).toFixed(2),
@@ -110,6 +115,7 @@ class BookingService {
         await WalletTransaction.create(
           {
             userId,
+            bookingId: booking.id,
             type: "purchase",
             currency: "miles",
             amount: -milesUsed,
@@ -122,6 +128,7 @@ class BookingService {
         await WalletTransaction.create(
           {
             userId,
+            bookingId: booking.id,
             type: "earning",
             currency: "miles",
             amount: milesEarned,
@@ -173,6 +180,57 @@ class BookingService {
       if (lessThan24hLeft) {
         throw new AppError(400,
           "Reservas canceláveis apenas até 24 horas antes do início do pacote.");
+      }
+      const moneyToRefund = Number.isFinite(Number(booking.moneyPaid)) ?
+        Number(booking.moneyPaid) :
+        0;
+      const milesToRefund = Number.isFinite(Number(booking.milesUsed)) ?
+        Number(booking.milesUsed) :
+        0;
+      const user = await User.findByPk(userId, {
+        transaction: t,
+      });
+      const newCashBalance = Number(user.cashBalance) + moneyToRefund;
+      const newMilesBalance = Number(user.milesBalance) + milesToRefund;
+
+      await User.update(
+        {
+          cashBalance: newCashBalance,
+          milesBalance: newMilesBalance,
+        },
+        {
+          where: {
+            id: userId,
+          },
+          transaction: t,
+        },
+      );
+      if (moneyToRefund > 0) {
+        await WalletTransaction.create(
+          {
+            userId,
+            bookingId: booking.id,
+            type: "refund",
+            currency: "money",
+            amount: moneyToRefund,
+            description: `Estorno por ${relatedPackage.name}`,
+          },
+          { transaction: t },
+        );
+      }
+
+      if (milesToRefund > 0) {
+        await WalletTransaction.create(
+          {
+            userId,
+            bookingId: booking.id,
+            type: "refund",
+            currency: "miles",
+            amount: milesToRefund,
+            description: `Estorno por ${relatedPackage.name}`,
+          },
+          { transaction: t },
+        );
       }
 
       booking.status = "cancelled";

@@ -19,6 +19,16 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
+      bookingId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: {
+          model: 'Bookings',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
       type: {
         type: Sequelize.ENUM('deposit', 'purchase', 'earning', 'refund'),
         allowNull: false,

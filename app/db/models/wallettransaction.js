@@ -14,6 +14,10 @@ class WalletTransaction extends Model {
           type: DataTypes.UUID,
           allowNull: false,
         },
+        bookingId: {
+          type: DataTypes.UUID,
+          allowNull: true,
+        },
         type: {
           type: DataTypes.ENUM('deposit', 'purchase', 'earning', 'refund'),
           allowNull: false,
@@ -51,6 +55,10 @@ class WalletTransaction extends Model {
     this.belongsTo(models.User, {
       foreignKey: "userId",
       as: "user",
+    });
+    this.belongsTo(models.Booking, {
+      foreignKey: "bookingId",
+      as: "booking",
     });
   }
 }
