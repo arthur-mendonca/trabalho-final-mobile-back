@@ -24,6 +24,18 @@ class BookingService {
         throw new AppError(404, "Usuário ou pacote não encontrados.");
       }
 
+      const alreadyBooked = await Booking.findOne({
+        where: {
+          userId,
+          packageId,
+        },
+        transaction: t,
+      });
+
+      if (alreadyBooked) {
+        throw new AppError(400, "Usuário já reservou este pacote.");
+      }
+
       if (user && user.role !== "cliente") {
         throw new AppError(403, "Apenas clientes podem compras pacotes.");
       }
@@ -45,9 +57,10 @@ class BookingService {
         }
       } else if (paymentMethod === "mixed") {
         milesUsed = parseInt(milesToUse, 10);
-        const remainingMilesCost = packagePrice * 100 - milesUsed;
-        moneyPaid = remainingMilesCost / 100;
-        if (user.milesBalance < milesUsed || user.cashBalance < moneyPaid) {
+        const remainingMilesCost = packagePrice * milesValueToday - milesUsed;
+        moneyPaid = parseFloat(remainingMilesCost).toFixed(2) / milesValueToday;
+        const parsedMoneyPaid = parseFloat(moneyPaid).toFixed(2);
+        if (user.milesBalance < milesUsed || user.cashBalance < parsedMoneyPaid) {
           throw new AppError(400, "Crédito insuficiente para pagamento misto.");
         }
       } else {
@@ -55,7 +68,7 @@ class BookingService {
       }
 
       // Debitar créditos do usuário
-      user.cashBalance = parseFloat(user.cashBalance) - moneyPaid;
+      user.cashBalance = parseFloat(user.cashBalance).toFixed(2) - parseFloat(moneyPaid).toFixed(2);
       user.milesBalance = parseInt(user.milesBalance, 10) - milesUsed;
 
       // Anotar milhas ganhas
@@ -72,22 +85,22 @@ class BookingService {
           packageId,
           quotedPrice: packagePrice,
           paymentMethod,
-          moneyPaid,
+          moneyPaid: parseFloat(moneyPaid).toFixed(2),
           milesUsed,
-          status: "confirmed",
+          status: "pending",
           milesEarned,
         },
         { transaction: t },
       );
 
       // Registrar transação na carteira
-      if (moneyPaid > 0) {
+      if (parseFloat(moneyPaid).toFixed(2) > 0) {
         await WalletTransaction.create(
           {
             userId,
             type: "purchase",
             currency: "money",
-            amount: -moneyPaid,
+            amount: -parseFloat(moneyPaid).toFixed(2),
             description: `Pagamento por ${travelPackage.name}`,
           },
           { transaction: t },
@@ -118,6 +131,81 @@ class BookingService {
         );
       }
 
+      await t.commit();
+      return booking;
+    } catch (error) {
+      await t.rollback();
+      throw new AppError(500, error.message);
+    }
+  }
+
+  async cancelPurchase({ userId, packageId }) {
+    const t = await sequelize.transaction();
+    try {
+      const booking = await Booking.findOne({
+        where: {
+          userId,
+          packageId,
+          status: "pending",
+        },
+        transaction: t,
+      });
+
+      if (!booking) {
+        throw new AppError(404, "Reserva não encontrada.");
+      }
+
+      const relatedPackage = await Package.findByPk(packageId, {
+        transaction: t,
+      });
+
+      if (!relatedPackage) {
+        throw new AppError(404, "Erro ao buscar pacote relacionado à reserva.");
+      }
+
+      const now = new Date()
+      const startDate = new Date(relatedPackage.startDate);
+      const diffMs = startDate.getTime() - now.getTime();
+      const MS_PER_HOUR = 1000 * 60 * 60;
+      const hoursLeft = diffMs / MS_PER_HOUR;
+      const lessThan24hLeft = hoursLeft < 24;
+
+      if (lessThan24hLeft) {
+        throw new AppError(400,
+          "Reservas canceláveis apenas até 24 horas antes do início do pacote.");
+      }
+
+      booking.status = "cancelled";
+      await booking.save({ transaction: t });
+      await t.commit();
+      return booking;
+    } catch (error) {
+      await t.rollback();
+      throw new AppError(500, error.message);
+    }
+  }
+
+  async confirmPurchase({ userId, packageId }) {
+    const t = await sequelize.transaction();
+    try {
+      const booking = await Booking.findOne({
+        where: {
+          userId,
+          packageId,
+          status: "pending",
+        },
+        transaction: t,
+      });
+
+      if (!booking) {
+        throw new AppError(
+          404,
+          "Reserva não encontrada ou já confirmada/cancelada.",
+        );
+      }
+
+      booking.status = "confirmed";
+      await booking.save({ transaction: t });
       await t.commit();
       return booking;
     } catch (error) {

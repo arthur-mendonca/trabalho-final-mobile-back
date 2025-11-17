@@ -9,4 +9,16 @@ router.post(
   BookingController.purchasePackage,
 );
 
+router.put(
+  "/:packageId/cancel",
+  authMiddleware,
+  BookingController.cancelPurchase,
+);
+
+router.put(
+  "/:packageId/confirm",
+  authMiddleware,
+  BookingController.confirmPurchase,
+);
+
 module.exports = router;

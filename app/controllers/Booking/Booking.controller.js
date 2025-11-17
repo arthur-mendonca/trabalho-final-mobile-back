@@ -22,6 +22,44 @@ class BookingController {
       return res.status(error.statusCode || 400).json({ error: error.message });
     }
   }
+
+  async cancelPurchase(req, res) {
+    try {
+      const { id } = req.user;
+      const { packageId } = req.params;
+
+      const booking = await BookingService.cancelPurchase({
+        userId: id,
+        packageId,
+      });
+
+      res.status(200).json({
+        message: "Pacote cancelado com sucesso!",
+        booking,
+      });
+    } catch (error) {
+      return res.status(error.statusCode || 400).json({ error: error.message });
+    }
+  }
+
+  async confirmPurchase(req, res) {
+    try {
+      const { id } = req.user;
+      const { packageId } = req.params;
+
+      const booking = await BookingService.confirmPurchase({
+        userId: id,
+        packageId,
+      });
+
+      res.status(200).json({
+        message: "Pacote confirmado com sucesso!",
+        booking,
+      });
+    } catch (error) {
+      return res.status(error.statusCode || 400).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = new BookingController();
