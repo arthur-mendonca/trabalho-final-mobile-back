@@ -271,6 +271,40 @@ class BookingService {
       throw new AppError(500, error.message);
     }
   }
+
+  async alreadyBooked({ userId, packageId }) {
+    try {
+      const booking = await Booking.findOne({
+        where: {
+          userId,
+          packageId,
+        },
+      });
+      if (booking) {
+        return true
+      }
+      return false;
+    } catch (error) {
+      throw new AppError(500, error.message);
+    }
+  }
+
+  async getBookingData({ userId, packageId }) {
+    try {
+      const booking = await Booking.findOne({
+        where: {
+          userId,
+          packageId,
+        },
+      });
+      if (!booking) {
+        throw new AppError(404, "Reserva para este pacote não encontrada.");
+      }
+      return booking;
+    } catch (error) {
+      throw new AppError(500, error.message);
+    }
+  }
 }
 
 module.exports = new BookingService();

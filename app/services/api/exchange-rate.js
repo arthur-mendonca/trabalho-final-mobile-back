@@ -10,10 +10,15 @@ class ExchangeRateService {
     async getExchangeRate() {
         try {
             const response = await axios.get(this.url);
+            console.log("Exchange Rate API Response:", response.data.conversion_rates.BRL);
             return response.data.conversion_rates.BRL;
         } catch (error) {
-            console.log(error);
-            throw new AppError(error.statusCode || 500, error.message);
+            console.log(error.message);
+
+            if (error) {
+                return 10;
+            }
+
         }
     }
 }

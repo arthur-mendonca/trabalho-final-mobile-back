@@ -21,4 +21,15 @@ router.put(
   BookingController.confirmPurchase,
 );
 
+router.get(
+  "/booked/:packageId",
+  authMiddleware,
+  BookingController.alreadyBooked,
+);
+
+router.get("/data/:packageId",
+  authMiddleware,
+  BookingController.getBookingData
+);
+
 module.exports = router;

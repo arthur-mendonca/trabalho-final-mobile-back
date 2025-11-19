@@ -60,6 +60,38 @@ class BookingController {
       return res.status(error.statusCode || 400).json({ error: error.message });
     }
   }
+  async alreadyBooked(req, res) {
+    try {
+      const { id } = req.user;
+      const { packageId } = req.params;
+
+      const response = await BookingService.alreadyBooked({
+        userId: id,
+        packageId,
+      });
+
+      res.status(200).json(response)
+    } catch (error) {
+      return res.status(error.statusCode || 400).json({ error: error.message });
+    }
+  }
+
+  async getBookingData(req, res) {
+    try {
+      const { id } = req.user;
+      const { packageId } = req.params;
+
+      const response = await BookingService.getBookingData({
+        userId: id,
+        packageId,
+      });
+
+      res.status(200).json(response)
+    } catch (error) {
+      return res.status(error.statusCode || 400).json({ error: error.message });
+
+    }
+  }
 }
 
 module.exports = new BookingController();
