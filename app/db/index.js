@@ -20,7 +20,7 @@ class Database {
     this.init();
   }
 
-  init() {
+  async init() {
     let sequelize;
     if (cfg.use_env_variable) {
       sequelize = new Sequelize(process.env[cfg.use_env_variable], cfg);
@@ -33,6 +33,8 @@ class Database {
     models.forEach(
       (model) => model.associate && model.associate(this.connection.models),
     );
+
+    await this.connection.sync();
   }
 }
 
