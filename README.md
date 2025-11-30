@@ -2,7 +2,7 @@
 
 Base URL
 
-- Substitua `<BASE_URL>` pelo FQDN do backend (ex.: `https://api-viagem.72-60-1-117.nip.io`).
+- Substitua `<BASE_URL>` por `http://localhost:3000`.
 - Para rotas protegidas, informe `Authorization: Bearer <ACCESS_TOKEN>`.
 
 ## Auth (`/auth`)
