@@ -32,4 +32,10 @@ router.get("/data/:packageId",
   BookingController.getBookingData
 );
 
+router.get(
+  "/user",
+  authMiddleware,
+  BookingController.getUserBookings,
+);
+
 module.exports = router;

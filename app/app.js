@@ -16,7 +16,6 @@ class App {
   middlewares() {
     this.server.use(
       cors({
-        // Reflete a origem do request; necessário para credenciais/cookies
         origin: true,
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE"],

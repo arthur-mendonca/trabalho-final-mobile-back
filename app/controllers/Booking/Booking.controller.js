@@ -92,6 +92,20 @@ class BookingController {
 
     }
   }
+
+  async getUserBookings(req, res) {
+    try {
+      const { id } = req.user;
+      const response = await BookingService.getUserBookings({
+        userId: id,
+      });
+
+      res.status(200).json(response)
+    } catch (error) {
+      return res.status(error.statusCode || 400).json({ error: error.message });
+    }
+  }
+
 }
 
 module.exports = new BookingController();

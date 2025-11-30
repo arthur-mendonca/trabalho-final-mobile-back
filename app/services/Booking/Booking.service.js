@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const Booking = require("../../db/models/booking");
 const Package = require("../../db/models/package");
 const User = require("../../db/models/user");
@@ -153,7 +154,9 @@ class BookingService {
         where: {
           userId,
           packageId,
-          status: "pending",
+          status: {
+            [Op.in]: ["pending", "confirmed"]
+          },
         },
         transaction: t,
       });
@@ -169,17 +172,13 @@ class BookingService {
       if (!relatedPackage) {
         throw new AppError(404, "Erro ao buscar pacote relacionado à reserva.");
       }
-
-      const now = new Date()
+      const now = new Date();
       const startDate = new Date(relatedPackage.startDate);
-      const diffMs = startDate.getTime() - now.getTime();
       const MS_PER_HOUR = 1000 * 60 * 60;
-      const hoursLeft = diffMs / MS_PER_HOUR;
-      const lessThan24hLeft = hoursLeft < 24;
+      const diffMs = startDate.getTime() - now.getTime();
 
-      if (lessThan24hLeft) {
-        throw new AppError(400,
-          "Reservas canceláveis apenas até 24 horas antes do início do pacote.");
+      if (diffMs < 24 * MS_PER_HOUR) {
+        throw new AppError(400, "Reservas canceláveis apenas até 24 horas antes do início do pacote.");
       }
       const moneyToRefund = Number.isFinite(Number(booking.moneyPaid)) ?
         Number(booking.moneyPaid) :
@@ -301,6 +300,26 @@ class BookingService {
         throw new AppError(404, "Reserva para este pacote não encontrada.");
       }
       return booking;
+    } catch (error) {
+      throw new AppError(500, error.message);
+    }
+  }
+
+  async getUserBookings({ userId }) {
+    try {
+      const bookings = await Booking.findAll({
+        where: {
+          userId,
+        },
+        include: [
+          {
+            model: Package,
+            as: "package",
+          }
+        ]
+      });
+
+      return bookings;
     } catch (error) {
       throw new AppError(500, error.message);
     }
