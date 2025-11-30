@@ -7,11 +7,10 @@ services:
     ports:
       - "3000:3000" # Mapeia a porta 3000 do host para a porta 3000 do container
     volumes:
-      - .:/app # Monta o volume para desenvolvimento (mudanças no código refletem no container)
-      - node_modules:/app/node_modules # Usa volume nomeado para node_modules no container
+      - node_modules:/app/node_modules # Volume nomeado para dependências
     environment:
       # Variáveis de ambiente para o backend
-      DATABASE_URL: postgres://user:postgres@db:5432/mydatabase
+      DATABASE_URL: postgres://user:password@db:5432/mydatabase
       JWT_SECRET: ${JWT_SECRET}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
@@ -29,18 +28,18 @@ services:
       # Variáveis de ambiente para o PostgreSQL
       POSTGRES_DB: mydatabase
       POSTGRES_USER: user
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432" # Mapeia a porta 5432 do host para a porta 5432 do container
     volumes:
-      - db_data:/var/lib/postgresql/data # Volume persistente para os dados do banco
+      - db_data_prod:/var/lib/postgresql/data # Volume persistente único
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user -d mydatabase || exit 1" ]
+      test: [ "CMD-SHELL", "pg_isready -U user -d mydatabase" ]
       interval: 5s
-      timeout: 3s
-      retries: 10
-      start_period: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
-  db_data: # Define o volume para o banco de dados
-  node_modules:
+  db_data_prod: # Volume nomeado para o banco
+  node_modules: # Volume para node_modules
