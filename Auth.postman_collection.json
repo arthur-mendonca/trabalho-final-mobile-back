@@ -1,0 +1,162 @@
+{
+	"info": {
+		"_postman_id": "9f4b26df-a520-4192-906e-029238de0ef4",
+		"name": "Auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31544636",
+		"_collection_link": "https://my-team-4550.postman.co/workspace/Pacote-Viagem-API~3cb49dd8-a6c9-43d6-8f62-d796bb07c360/collection/31544636-9f4b26df-a520-4192-906e-029238de0ef4?action=share&source=collection_link&creator=31544636"
+	},
+	"item": [
+		{
+			"name": "GitHub Auth",
+			"item": [
+				{
+					"name": "Init Github Auth",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/auth/github",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"auth",
+								"github"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body",
+							"const responseData = pm.response.json();",
+							"",
+							"// Store the tokens in environment variables",
+							"if (responseData.accessToken) {",
+							"    pm.globals.set(\"accessToken\", responseData.accessToken);",
+							"}",
+							"",
+							"if (responseData.refreshToken) {",
+							"    pm.globals.set(\"refreshToken\", responseData.refreshToken);",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"user@mail.com\",\r\n    \"password\": \"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{prodUrl}}/auth/login",
+					"host": [
+						"{{prodUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh token",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{prodUrl}}/auth/refresh",
+					"host": [
+						"{{prodUrl}}"
+					],
+					"path": [
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/auth/logout",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

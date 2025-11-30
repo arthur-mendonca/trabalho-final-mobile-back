@@ -1,0 +1,193 @@
+{
+	"info": {
+		"_postman_id": "e78bc01f-7581-460b-badb-ade003df92a2",
+		"name": "Bookings",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31544636",
+		"_collection_link": "https://my-team-4550.postman.co/workspace/Pacote-Viagem-API~3cb49dd8-a6c9-43d6-8f62-d796bb07c360/collection/31544636-e78bc01f-7581-460b-badb-ade003df92a2?action=share&source=collection_link&creator=31544636"
+	},
+	"item": [
+		{
+			"name": "Book Package",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"paymentMethod\": \"mixed\",\r\n    \"milesToUse\": \"22000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/bookings/e640c39c-adde-4fc5-8e99-e1e4e9affbd3/purchase",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"bookings",
+						"e640c39c-adde-4fc5-8e99-e1e4e9affbd3",
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel Booking",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/bookings/3a6d99c4-7632-4d50-9c6d-c4abd64c69d5/cancel",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"bookings",
+						"3a6d99c4-7632-4d50-9c6d-c4abd64c69d5",
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Booking",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/bookings/7e1ae854-764a-496d-ad42-ed224ad8fc28/confirm",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"bookings",
+						"7e1ae854-764a-496d-ad42-ed224ad8fc28",
+						"confirm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Already Booked",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/bookings/booked/d5778451-8655-4f76-ac5d-52569a2bff57",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"bookings",
+						"booked",
+						"d5778451-8655-4f76-ac5d-52569a2bff57"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Booking Data",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/bookings/data/254020e1-fc56-4480-892a-aaaa13911d1b",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"bookings",
+						"data",
+						"254020e1-fc56-4480-892a-aaaa13911d1b"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Bookings By User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/bookings/user",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"bookings",
+						"user"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

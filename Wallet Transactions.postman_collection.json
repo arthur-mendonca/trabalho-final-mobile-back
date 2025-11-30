@@ -1,0 +1,65 @@
+{
+	"info": {
+		"_postman_id": "6f17c0f9-a17f-4519-ac63-dc2cc47c9426",
+		"name": "Wallet Transactions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31544636",
+		"_collection_link": "https://my-team-4550.postman.co/workspace/Pacote-Viagem-API~3cb49dd8-a6c9-43d6-8f62-d796bb07c360/collection/31544636-6f17c0f9-a17f-4519-ac63-dc2cc47c9426?action=share&source=collection_link&creator=31544636"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/wallet",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all by User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/wallet",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

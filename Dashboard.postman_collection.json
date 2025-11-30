@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "a49a58be-2f87-458a-bbb7-c24312d4d308",
+		"name": "Dashboard",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31544636",
+		"_collection_link": "https://my-team-4550.postman.co/workspace/Pacote-Viagem-API~3cb49dd8-a6c9-43d6-8f62-d796bb07c360/collection/31544636-a49a58be-2f87-458a-bbb7-c24312d4d308?action=share&source=collection_link&creator=31544636"
+	},
+	"item": [
+		{
+			"name": "Get Dashboard Data",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/dashboard/data",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"dashboard",
+						"data"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
