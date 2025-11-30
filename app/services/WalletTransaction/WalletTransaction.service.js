@@ -2,6 +2,7 @@ const WalletTransaction = require("../../db/models/wallettransaction");
 const User = require("../../db/models/user");
 const { sequelize } = require("../../db/models/user");
 const AppError = require("../../errors/AppError");
+const { Op } = require("sequelize");
 
 class WalletTransactionService {
     async create({ userId, amount, type, currency, description, bookingId }) {
@@ -83,6 +84,67 @@ class WalletTransactionService {
             where: { userId },
             order: [["createdAt", "DESC"]],
         });
+    }
+
+    async grantDailyLoginBonus({ userId, role }) {
+        if (role === "agente") {
+            throw new AppError(403, "Somente clientes recebem bônus diário.");
+        }
+        const now = new Date();
+        const base = 1000;
+        const variation = (now.getUTCDate() + now.getUTCDay() + (now.getUTCMonth() + 1)) % 11;
+        const bonusMiles = base + variation;
+
+        const start = new Date(now);
+        start.setUTCHours(0, 0, 0, 0);
+        const next = new Date(now);
+        next.setUTCHours(24, 0, 0, 0);
+
+        const t = await sequelize.transaction();
+        try {
+            const alreadyGiven = await WalletTransaction.findOne({
+                where: {
+                    userId,
+                    type: "earning",
+                    currency: "miles",
+                    description: "Bônus de login diário",
+                    createdAt: { [Op.gte]: start, [Op.lt]: next },
+                },
+                transaction: t,
+            });
+            if (alreadyGiven) {
+                throw new AppError(400, "Bônus de login diário já concedido hoje.");
+            }
+
+            const user = await User.findByPk(userId, { transaction: t });
+            if (!user) {
+                throw new AppError(404, "Usuário não encontrado.");
+            }
+
+            const newMilesBalance = parseInt(user.milesBalance, 10) + bonusMiles;
+            await User.update(
+                { milesBalance: newMilesBalance },
+                { where: { id: userId }, transaction: t },
+            );
+
+            const walletTransaction = await WalletTransaction.create(
+                {
+                    userId,
+                    bookingId: null,
+                    type: "earning",
+                    currency: "miles",
+                    amount: bonusMiles,
+                    description: "Bônus de login diário",
+                },
+                { transaction: t },
+            );
+
+            await t.commit();
+            return walletTransaction;
+        } catch (error) {
+            await t.rollback();
+            throw new AppError(error.statusCode || 500, error.message);
+        }
     }
 }
 module.exports = new WalletTransactionService();

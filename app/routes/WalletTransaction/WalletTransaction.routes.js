@@ -7,5 +7,6 @@ const WalletTransactionController = require("../../../app/controllers/WalletTran
 routes.use(authMiddleware);
 routes.get("/", WalletTransactionController.index);
 routes.post("/", WalletTransactionController.create);
+routes.post("/bonus/daily", WalletTransactionController.grantDailyLoginBonus);
 
 module.exports = routes;

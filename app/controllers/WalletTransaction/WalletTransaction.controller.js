@@ -28,5 +28,15 @@ class WalletTransactionController {
             return res.status(error.statusCode || 500).json({ error: error.message });
         }
     }
+
+    async grantDailyLoginBonus(req, res) {
+        try {
+            const { id: userId, role } = req.user;
+            const tx = await WalletTransactionService.grantDailyLoginBonus({ userId, role });
+            return res.status(201).json(tx);
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({ error: error.message });
+        }
+    }
 }
 module.exports = new WalletTransactionController();
