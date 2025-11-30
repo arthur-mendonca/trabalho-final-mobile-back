@@ -8,7 +8,7 @@ services:
       - "3000:3000" # Mapeia a porta 3000 do host para a porta 3000 do container
     volumes:
       - .:/app # Monta o volume para desenvolvimento (mudanças no código refletem no container)
-      - /app/node_modules # Impede que o node_modules do host sobrescreva o do container
+      - node_modules:/app/node_modules # Usa volume nomeado para node_modules no container
     environment:
       # Variáveis de ambiente para o backend
       DATABASE_URL: ${DATABASE_URL}
@@ -35,7 +35,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data # Volume persistente para os dados do banco
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase || exit 1"]
+      test: [ "CMD-SHELL", "pg_isready -U user -d mydatabase || exit 1" ]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -43,3 +43,4 @@ services:
 
 volumes:
   db_data: # Define o volume para o banco de dados
+  node_modules:
