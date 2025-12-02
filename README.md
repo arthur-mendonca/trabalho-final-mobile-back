@@ -1,3 +1,6 @@
+# Coleção de Requests URL
+Ver pasta request-collection
+
 # API – Exemplos de requisições `curl`
 
 Base URL
