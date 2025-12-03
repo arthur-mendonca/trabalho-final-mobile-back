@@ -1,4 +1,4 @@
-# Coleção de Requests URL
+# Coleção de Requests HTTP
 Ver pasta request-collection
 
 # API – Exemplos de requisições `curl`
